@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1052330010557",
+    "project_id": "fartapp-56b08",
+    "storage_bucket": "fartapp-56b08.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1052330010557:android:740a647dc17d22a7e854d4",
+        "android_client_info": {
+          "package_name": "com.art.fartapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1052330010557-dn5vg2s59dt3f94vh7f3fe92p0jp03kd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.art.fartapp",
+            "certificate_hash": "89251964a7401e3de257cd624f50c0311e4ae980"
+          }
+        },
+        {
+          "client_id": "1052330010557-i4olv43sr344vco1j0demr0enjelstd3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDqXw0uKspmUKjttjXBXFGCw8ETVeyjD0U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1052330010557-i4olv43sr344vco1j0demr0enjelstd3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

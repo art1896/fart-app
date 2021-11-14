@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/fartersFragment">
+
+    <fragment
+        android:id="@+id/fartersFragment"
+        android:name="com.art.fartapp.ui.farters.FartersFragment"
+        android:label="Farters"
+        tools:layout="@layout/fragment_farters">
+        <action
+            android:id="@+id/action_fartersFragment_to_addEditFarterFragment"
+            app:destination="@id/addEditFarterFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addEditFarterFragment"
+        android:name="com.art.fartapp.ui.addeditfarter.AddEditFarterFragment"
+        android:label="{title}"
+        tools:layout="@layout/fragment_add_edit_farter">
+        <argument
+            android:name="farter"
+            android:defaultValue="@null"
+            app:argType="com.art.fartapp.db.Farter"
+            app:nullable="true" />
+        <argument
+            android:name="title"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_addEditFarterFragment_to_qrScannerFragment"
+            app:destination="@id/qrScannerFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/qrScannerFragment"
+        android:name="com.art.fartapp.ui.addeditfarter.QrScannerFragment"
+        android:label="fragment_qr_scanner"
+        tools:layout="@layout/fragment_qr_scanner">
+        <argument
+            android:name="name"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_qrScannerFragment_to_fartersFragment"
+            app:destination="@id/fartersFragment" />
+    </fragment>
+    <dialog
+        android:id="@+id/deleteAllFartersDialogFragment"
+        android:name="com.art.fartapp.dialogs.DeleteAllFartersDialogFragment"
+        android:label="DeleteAllFartersDialogFragment" />
+    <action
+        android:id="@+id/action_global_deleteAllFartersDialogFragment"
+        app:destination="@id/deleteAllFartersDialogFragment" />
+    <dialog
+        android:id="@+id/sendFartDialogFragment"
+        android:name="com.art.fartapp.dialogs.SendFartDialogFragment"
+        android:label="SendFartDialogFragment">
+        <argument
+            android:name="farter"
+            app:argType="com.art.fartapp.db.Farter" />
+    </dialog>
+    <action
+        android:id="@+id/action_global_sendFartDialogFragment"
+        app:destination="@id/sendFartDialogFragment" />
+    <dialog
+        android:id="@+id/qrDialogFragment"
+        android:name="com.art.fartapp.dialogs.QrDialogFragment"
+        android:label="QrDialogFragment">
+        <argument
+            android:name="token"
+            app:argType="string"
+            app:nullable="true" />
+    </dialog>
+    <action
+        android:id="@+id/action_global_qrDialogFragment"
+        app:destination="@id/qrDialogFragment" />
+</navigation>
