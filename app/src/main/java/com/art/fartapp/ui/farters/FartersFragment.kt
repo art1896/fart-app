@@ -1,5 +1,6 @@
 package com.art.fartapp.ui.farters
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
@@ -17,12 +18,17 @@ import com.art.fartapp.R
 import com.art.fartapp.data.SortOrder
 import com.art.fartapp.databinding.FragmentFartersBinding
 import com.art.fartapp.db.Farter
+import com.art.fartapp.util.ConnectivityManager
 import com.art.fartapp.util.exhaustive
 import com.art.fartapp.util.onQueryTextChanged
+import com.google.android.gms.ads.AdRequest
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
+import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class FartersFragment : Fragment(R.layout.fragment_farters), FartersAdapter.OnItemClickListener {
@@ -31,17 +37,38 @@ class FartersFragment : Fragment(R.layout.fragment_farters), FartersAdapter.OnIt
     private val binding get() = _binding!!
     private val viewModel by viewModels<FartersViewModel>()
     private lateinit var searchView: SearchView
+    private var hideFabJob: Job? = null
+    private lateinit var fartersAdapter: FartersAdapter
+
+    @Inject
+    lateinit var connectivityManager: ConnectivityManager
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentFartersBinding.bind(view)
-        val fartersAdapter = FartersAdapter(this)
+        fartersAdapter = FartersAdapter(this)
+        val adRequest = AdRequest.Builder().build()
+        binding.adView.loadAd(adRequest)
         binding.apply {
             recyclerViewFarters.apply {
                 adapter = fartersAdapter
                 setHasFixedSize(true)
+                addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                    override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                        super.onScrollStateChanged(recyclerView, newState)
+                        when (newState) {
+                            RecyclerView.SCROLL_STATE_IDLE -> {
+                                hideFab()
+                            }
+                            RecyclerView.SCROLL_STATE_DRAGGING -> {
+                                if (binding.fabAddFarter.alpha < 1f) {
+                                    binding.fabAddFarter.animate().alpha(1f)
+                                }
+                            }
+                        }
+                    }
+                })
             }
-
             ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
                 override fun onMove(
                     recyclerView: RecyclerView,
@@ -67,8 +94,10 @@ class FartersFragment : Fragment(R.layout.fragment_farters), FartersAdapter.OnIt
             viewModel.onAddEditResult(result)
         }
 
+        hideFab()
+
         viewModel.farters.observe(viewLifecycleOwner) {
-            binding.imageViewFart.alpha = if (it.isEmpty()) 1f else 0.3f
+            binding.imageViewFart.animate().alpha(if (it.isEmpty()) 1f else 0.3f)
             fartersAdapter.submitList(it)
         }
 
@@ -115,6 +144,15 @@ class FartersFragment : Fragment(R.layout.fragment_farters), FartersAdapter.OnIt
                             FartersFragmentDirections.actionGlobalQrDialogFragment(viewModel.preferencesFlow.first().token)
                         findNavController().navigate(action)
                     }
+                    FartersViewModel.FartersEvent.ShowNoInternetConnectionMessage -> {
+                        Snackbar.make(
+                            requireView(),
+                            "No Internet Connection",
+                            Snackbar.LENGTH_LONG
+                        ).setBackgroundTint(
+                            Color.parseColor("#EE5260")
+                        ).show()
+                    }
                 }.exhaustive
             }
         }
@@ -123,9 +161,34 @@ class FartersFragment : Fragment(R.layout.fragment_farters), FartersAdapter.OnIt
     }
 
     override fun onDestroyView() {
+        binding.adView.destroy()
         super.onDestroyView()
         searchView.setOnQueryTextListener(null)
         _binding = null
+    }
+
+    override fun onPause() {
+        binding.adView.pause()
+        super.onPause()
+    }
+
+    override fun onResume() {
+        binding.adView.resume()
+        super.onResume()
+    }
+
+    private fun hideFab() {
+        if (this::fartersAdapter.isInitialized && fartersAdapter.itemCount != 0) {
+            hideFabJob?.cancel()
+            hideFabJob = CoroutineScope(Dispatchers.Main).launch {
+                delay(5000)
+                try {
+                    binding.fabAddFarter.animate().alpha(0f)
+                } catch (e: NullPointerException) {
+                    e.printStackTrace()
+                }
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
