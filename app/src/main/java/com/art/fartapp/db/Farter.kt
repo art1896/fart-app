@@ -4,7 +4,8 @@ import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import kotlinx.android.parcel.Parcelize
-import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.*
 
 @Entity(tableName = "farter_table")
 @Parcelize
@@ -14,7 +15,11 @@ data class Farter(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val created: Long = System.currentTimeMillis()
-): Parcelable {
+) : Parcelable {
     val createdDateFormatted: String
-        get() = DateFormat.getDateTimeInstance().format(created)
+        get() {
+            val sdf = SimpleDateFormat("MMM dd/yyyy HH:mm", Locale.US)
+            val resultDate = Date(created)
+            return sdf.format(resultDate)
+        }
 }

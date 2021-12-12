@@ -7,6 +7,7 @@ import com.art.fartapp.data.repository.FirebaseRepository
 import com.art.fartapp.db.Farter
 import com.art.fartapp.db.FarterDao
 import com.art.fartapp.ui.EDIT_FARTER_RESULT_OK
+import com.art.fartapp.util.ConnectivityManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.combine
@@ -21,7 +22,8 @@ import javax.inject.Inject
 class FartersViewModel @Inject constructor(
     private val farterDao: FarterDao,
     private val preferencesManager: PreferencesManager,
-    private val state: SavedStateHandle
+    private val state: SavedStateHandle,
+    private val connectivityManager: ConnectivityManager
 ) : ViewModel() {
 
     val searchQuery = this.state.getLiveData("searchQuery", "")
@@ -83,7 +85,11 @@ class FartersViewModel @Inject constructor(
     }
 
     fun onSendFartClick(farter: Farter) = viewModelScope.launch {
-        fartersEventChannel.send(FartersEvent.NavigateToSendFartScreen(farter))
+        if (connectivityManager.isNetworkAvailable.value) {
+            fartersEventChannel.send(FartersEvent.NavigateToSendFartScreen(farter))
+        } else {
+            fartersEventChannel.send(FartersEvent.ShowNoInternetConnectionMessage)
+        }
     }
 
     sealed class FartersEvent {
@@ -94,6 +100,7 @@ class FartersViewModel @Inject constructor(
         object NavigatetoDeleteAllFartersScreen: FartersEvent()
         data class NavigateToSendFartScreen(val farter: Farter): FartersEvent()
         data class NavigateToQrScreen(val token: String?): FartersEvent()
+        object ShowNoInternetConnectionMessage: FartersEvent()
     }
 
 

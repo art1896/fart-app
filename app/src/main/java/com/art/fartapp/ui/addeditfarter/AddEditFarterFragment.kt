@@ -14,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import com.art.fartapp.R
 import com.art.fartapp.databinding.FragmentAddEditFarterBinding
 import com.art.fartapp.util.exhaustive
+import com.google.android.gms.ads.AdRequest
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
@@ -32,6 +33,8 @@ class AddEditFarterFragment : Fragment(R.layout.fragment_add_edit_farter),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentAddEditFarterBinding.bind(view)
+        val adRequest = AdRequest.Builder().build()
+        binding.adView.loadAd(adRequest)
         binding.apply {
             imageButtonQrScanner.setOnClickListener {
                 if (editTextName.text!!.isEmpty()) {
@@ -88,8 +91,19 @@ class AddEditFarterFragment : Fragment(R.layout.fragment_add_edit_farter),
     }
 
     override fun onDestroyView() {
+        binding.adView.destroy()
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onPause() {
+        binding.adView.pause()
+        super.onPause()
+    }
+
+    override fun onResume() {
+        binding.adView.resume()
+        super.onResume()
     }
 
     override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {
