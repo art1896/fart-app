@@ -2,10 +2,7 @@ package com.art.fartapp.data
 
 import android.content.Context
 import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.emptyPreferences
-import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.*
 import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.catch
@@ -16,7 +13,11 @@ import javax.inject.Singleton
 
 enum class SortOrder { BY_NAME, BY_DATE }
 
-data class FilterPreferences(val sortOrder: SortOrder, val token: String?)
+data class FilterPreferences(
+    val sortOrder: SortOrder,
+    val token: String?,
+    val isGuideShowed: Boolean
+)
 
 @Singleton
 class PreferencesManager @Inject constructor(@ApplicationContext context: Context) {
@@ -35,12 +36,19 @@ class PreferencesManager @Inject constructor(@ApplicationContext context: Contex
                 preferences[PreferencesKeys.SORT_ORDER] ?: SortOrder.BY_DATE.name
             )
             val token = preferences[PreferencesKeys.TOKEN]
-            FilterPreferences(sortOrder, token)
+            val showed = preferences[PreferencesKeys.IS_GUIDE_SHOWED] ?: false
+            FilterPreferences(sortOrder, token, showed)
         }
 
     suspend fun updateSortOrder(sortOrder: SortOrder) {
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.SORT_ORDER] = sortOrder.name
+        }
+    }
+
+    suspend fun updateGuideShowed(showed: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.IS_GUIDE_SHOWED] = showed
         }
     }
 
@@ -53,5 +61,6 @@ class PreferencesManager @Inject constructor(@ApplicationContext context: Contex
     private object PreferencesKeys {
         val SORT_ORDER = stringPreferencesKey("sort_order")
         val TOKEN = stringPreferencesKey("token")
+        val IS_GUIDE_SHOWED = booleanPreferencesKey("isGuideShowed")
     }
 }

@@ -29,6 +29,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
+private const val TAG = "FartersFragment"
 
 @AndroidEntryPoint
 class FartersFragment : Fragment(R.layout.fragment_farters), FartersAdapter.OnItemClickListener {
@@ -94,6 +95,10 @@ class FartersFragment : Fragment(R.layout.fragment_farters), FartersAdapter.OnIt
             viewModel.onAddEditResult(result)
         }
 
+        setFragmentResultListener("user_guide_showed") { _, bundle ->
+            viewModel.updateIsGuideShowed(bundle.getBoolean("showed"))
+        }
+
         hideFab()
 
         viewModel.farters.observe(viewLifecycleOwner) {
@@ -102,6 +107,9 @@ class FartersFragment : Fragment(R.layout.fragment_farters), FartersAdapter.OnIt
         }
 
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            if (!viewModel.preferencesFlow.first().isGuideShowed) {
+                viewModel.onUserGuideClick()
+            }
             viewModel.fartersEvent.collect { event ->
                 when (event) {
                     is FartersViewModel.FartersEvent.ShowUndoDeleteFarterMessage -> {
@@ -153,6 +161,9 @@ class FartersFragment : Fragment(R.layout.fragment_farters), FartersAdapter.OnIt
                             Color.parseColor("#EE5260")
                         ).show()
                     }
+                    FartersViewModel.FartersEvent.NavigateToUserGuideScreen -> {
+                        showUserGuideDialog()
+                    }
                 }.exhaustive
             }
         }
@@ -165,6 +176,11 @@ class FartersFragment : Fragment(R.layout.fragment_farters), FartersAdapter.OnIt
         super.onDestroyView()
         searchView.setOnQueryTextListener(null)
         _binding = null
+    }
+
+    private fun showUserGuideDialog() {
+        val action = FartersFragmentDirections.actionGlobalHowToDialogFragment()
+        findNavController().navigate(action)
     }
 
     override fun onPause() {
@@ -181,7 +197,7 @@ class FartersFragment : Fragment(R.layout.fragment_farters), FartersAdapter.OnIt
         if (this::fartersAdapter.isInitialized && fartersAdapter.itemCount != 0) {
             hideFabJob?.cancel()
             hideFabJob = CoroutineScope(Dispatchers.Main).launch {
-                delay(5000)
+                delay(3000)
                 try {
                     binding.fabAddFarter.animate().alpha(0f)
                 } catch (e: NullPointerException) {
@@ -196,13 +212,11 @@ class FartersFragment : Fragment(R.layout.fragment_farters), FartersAdapter.OnIt
 
         val searchItem = menu.findItem(R.id.action_search)
         searchView = searchItem.actionView as SearchView
-
         val pendingQuery = viewModel.searchQuery.value
         if (pendingQuery != null && pendingQuery.isNotEmpty()) {
             searchItem.expandActionView()
             searchView.setQuery(pendingQuery, false)
         }
-
         searchView.onQueryTextChanged {
             viewModel.searchQuery.value = it
         }
@@ -224,6 +238,10 @@ class FartersFragment : Fragment(R.layout.fragment_farters), FartersAdapter.OnIt
             }
             R.id.action_qr -> {
                 viewModel.onQrClick()
+                true
+            }
+            R.id.action_user_guide -> {
+                viewModel.onUserGuideClick()
                 true
             }
             else -> super.onOptionsItemSelected(item)

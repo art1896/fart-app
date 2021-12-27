@@ -1,6 +1,7 @@
 package com.art.fartapp.util
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.content.res.Resources
 import android.graphics.Insets
@@ -9,10 +10,14 @@ import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.util.Size
+import android.view.View
 import android.view.WindowInsets
 import android.view.WindowManager
 import android.view.WindowMetrics
 import androidx.fragment.app.Fragment
+import smartdevelop.ir.eram.showcaseviewlib.GuideView
+import smartdevelop.ir.eram.showcaseviewlib.config.DismissType
+import smartdevelop.ir.eram.showcaseviewlib.listener.GuideListener
 
 val <T> T.exhaustive: T
     get() = this
@@ -27,6 +32,21 @@ fun Fragment.vibrate() {
     }
 }
 
+fun Activity.showShowCaseView(
+    title: String,
+    contentText: String,
+    view: View,
+    guideListener: GuideListener
+) {
+    GuideView.Builder(this)
+        .setTitle(title)
+        .setContentText(contentText)
+        .setTargetView(view)
+        .setDismissType(DismissType.anywhere)
+        .setGuideListener(guideListener)
+        .build()
+        .show()
+}
 
 fun Context.getDisplayDimensions(): Pair<Int, Int> {
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
