@@ -3,7 +3,6 @@ package com.art.fartapp.ui.farters
 import androidx.lifecycle.*
 import com.art.fartapp.data.PreferencesManager
 import com.art.fartapp.data.SortOrder
-import com.art.fartapp.data.repository.FirebaseRepository
 import com.art.fartapp.db.Farter
 import com.art.fartapp.db.FarterDao
 import com.art.fartapp.ui.EDIT_FARTER_RESULT_OK
@@ -67,13 +66,17 @@ class FartersViewModel @Inject constructor(
     }
 
     fun onAddEditResult(result: Int) {
-        when(result) {
+        when (result) {
             EDIT_FARTER_RESULT_OK -> showFarterSavedConfirmationMessage("Farter updated")
         }
     }
 
     fun onQrClick() = viewModelScope.launch {
         fartersEventChannel.send(FartersEvent.NavigateToQrScreen(preferencesFlow.first().token))
+    }
+
+    fun onUserGuideClick() = viewModelScope.launch {
+        fartersEventChannel.send(FartersEvent.NavigateToUserGuideScreen)
     }
 
     fun showFarterSavedConfirmationMessage(msg: String) = viewModelScope.launch {
@@ -92,15 +95,21 @@ class FartersViewModel @Inject constructor(
         }
     }
 
+    fun updateIsGuideShowed(showed: Boolean) = viewModelScope.launch {
+        preferencesManager.updateGuideShowed(showed)
+    }
+
+
     sealed class FartersEvent {
         object NavigateToAddFarterScreen : FartersEvent()
         data class NavigateToEditFarterScreen(val farter: Farter) : FartersEvent()
         data class ShowUndoDeleteFarterMessage(val farter: Farter) : FartersEvent()
         data class ShowFarterSavedConfirmationMessage(val msg: String) : FartersEvent()
-        object NavigatetoDeleteAllFartersScreen: FartersEvent()
-        data class NavigateToSendFartScreen(val farter: Farter): FartersEvent()
-        data class NavigateToQrScreen(val token: String?): FartersEvent()
-        object ShowNoInternetConnectionMessage: FartersEvent()
+        object NavigatetoDeleteAllFartersScreen : FartersEvent()
+        data class NavigateToSendFartScreen(val farter: Farter) : FartersEvent()
+        data class NavigateToQrScreen(val token: String?) : FartersEvent()
+        object ShowNoInternetConnectionMessage : FartersEvent()
+        object NavigateToUserGuideScreen : FartersViewModel.FartersEvent()
     }
 
 

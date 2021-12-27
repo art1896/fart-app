@@ -11,11 +11,15 @@
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:clipChildren="false"
+        android:clipToPadding="false">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:clipChildren="false"
             android:orientation="vertical">
 
             <com.airbnb.lottie.LottieAnimationView
@@ -58,17 +62,15 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-
-            <ImageButton
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/image_button_qr_scanner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="16dp"
-                android:background="@null"
                 android:src="@drawable/ic_qr_scanner"
-                app:tint="@color/white" />
-
+                app:maxImageSize="32dp"
+                app:tint="@color/white"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"/>
 
 
         </LinearLayout>
@@ -79,18 +81,18 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_gravity="bottom">
+        android:layout_gravity="bottom"
+        android:orientation="vertical">
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_save_farter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:fabSize="mini"
             android:layout_gravity="bottom|end"
-            app:tint="@color/white"
+            android:layout_margin="16dp"
             android:src="@drawable/ic_round_check_24"
-            android:layout_margin="16dp"/>
+            app:fabSize="mini"
+            app:tint="@color/white" />
 
         <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
             android:id="@+id/adView"
@@ -102,8 +104,6 @@
 
 
     </LinearLayout>
-
-
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -19,16 +19,18 @@ import com.art.fartapp.di.ApplicationScope
 import com.art.fartapp.ui.MainActivity
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
+@AndroidEntryPoint
 class FirebaseService : FirebaseMessagingService() {
 
     @Inject
     lateinit var preferencesManager: PreferencesManager
 
+    @ApplicationScope
     @Inject
     lateinit var applicationScope: CoroutineScope
 

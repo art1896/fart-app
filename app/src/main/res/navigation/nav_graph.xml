@@ -73,4 +73,12 @@
     <action
         android:id="@+id/action_global_qrDialogFragment"
         app:destination="@id/qrDialogFragment" />
+    <dialog
+        android:id="@+id/howToDialogFragment"
+        android:name="com.art.fartapp.dialogs.HowToDialogFragment"
+        android:label="HowToDialogFragment" />
+    <action
+        android:id="@+id/action_global_howToDialogFragment"
+        app:destination="@id/howToDialogFragment"/>
+
 </navigation>

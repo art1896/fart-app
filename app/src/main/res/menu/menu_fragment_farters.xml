@@ -39,4 +39,9 @@
         android:title="Clear all farters"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/action_user_guide"
+        android:title="User guide"
+        app:showAsAction="never" />
+
 </menu>
