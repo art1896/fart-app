@@ -2,6 +2,7 @@ package com.art.fartapp.ui.farters
 
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -29,7 +30,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
-private const val TAG = "FartersFragment"
+private const val TAG = "FarterDatabase"
 
 @AndroidEntryPoint
 class FartersFragment : Fragment(R.layout.fragment_farters), FartersAdapter.OnItemClickListener {
@@ -80,7 +81,7 @@ class FartersFragment : Fragment(R.layout.fragment_farters), FartersAdapter.OnIt
                 }
 
                 override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                    val farter = fartersAdapter.currentList[viewHolder.adapterPosition]
+                    val farter = fartersAdapter.currentList[viewHolder.absoluteAdapterPosition]
                     viewModel.onFarterSwiped(farter)
                 }
             }).attachToRecyclerView(recyclerViewFarters)
@@ -102,6 +103,7 @@ class FartersFragment : Fragment(R.layout.fragment_farters), FartersAdapter.OnIt
         hideFab()
 
         viewModel.farters.observe(viewLifecycleOwner) {
+            Log.d(TAG, "onViewCreated: $it")
             binding.imageViewFart.animate().alpha(if (it.isEmpty()) 1f else 0.3f)
             fartersAdapter.submitList(it)
         }

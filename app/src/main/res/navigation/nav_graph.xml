@@ -79,6 +79,17 @@
         android:label="HowToDialogFragment" />
     <action
         android:id="@+id/action_global_howToDialogFragment"
-        app:destination="@id/howToDialogFragment"/>
+        app:destination="@id/howToDialogFragment" />
+    <dialog
+        android:id="@+id/sendBackDialogFragment"
+        android:name="com.art.fartapp.dialogs.SendBackDialogFragment"
+        android:label="SendBackDialogFragment">
+        <argument
+            android:name="token"
+            app:argType="string" />
+    </dialog>
+    <action
+        android:id="@+id/action_global_sendBackDialogFragment"
+        app:destination="@id/sendBackDialogFragment" />
 
 </navigation>
