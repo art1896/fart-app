@@ -1,9 +1,9 @@
 package com.art.fartapp.ui
 
 import android.app.Activity
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.navigation.NavController
@@ -11,6 +11,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.art.fartapp.R
+import com.art.fartapp.dialogs.SendBackDialogFragmentDirections
 import com.art.fartapp.util.ConnectionLiveData
 import com.art.fartapp.util.ConnectivityManager
 import com.google.android.gms.ads.MobileAds
@@ -86,6 +87,22 @@ class MainActivity : AppCompatActivity() {
         connectivityManager.unregisterConnectionObserver(this)
         observed = false
     }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        navigateToSendBackFragmentIfNeeded(intent)
+    }
+
+    private fun navigateToSendBackFragmentIfNeeded(intent: Intent?) {
+        if (intent?.action == ACTION_SEND_BACK_FRAGMENT) {
+            navController.navigate(
+                SendBackDialogFragmentDirections.actionGlobalSendBackDialogFragment(
+                    intent.getStringExtra("token")!!
+                )
+            )
+        }
+    }
 }
 
 const val EDIT_FARTER_RESULT_OK = Activity.RESULT_FIRST_USER + 1
+const val ACTION_SEND_BACK_FRAGMENT = "ACTION_SEND_BACK_FRAGMENT"

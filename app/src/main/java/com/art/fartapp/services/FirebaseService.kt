@@ -10,12 +10,12 @@ import android.content.Intent
 import android.media.AudioAttributes
 import android.net.Uri
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.art.fartapp.R
 import com.art.fartapp.data.PreferencesManager
 import com.art.fartapp.di.ApplicationScope
+import com.art.fartapp.ui.ACTION_SEND_BACK_FRAGMENT
 import com.art.fartapp.ui.MainActivity
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
@@ -39,7 +39,8 @@ class FirebaseService : FirebaseMessagingService() {
         val data = message.data
         val title = data["title"]
         val body = data["body"]
-        sendNotification(title!!, body!!)
+        val token = data["token"]
+        sendNotification(title!!, body!!, token!!)
     }
 
     override fun onNewToken(p0: String) {
@@ -49,7 +50,7 @@ class FirebaseService : FirebaseMessagingService() {
         }
     }
 
-    private fun sendNotification(title: String, body: String) {
+    private fun sendNotification(title: String, body: String, token: String) {
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
@@ -68,7 +69,7 @@ class FirebaseService : FirebaseMessagingService() {
                 .setAutoCancel(true)
                 .setSound(sound)
                 .setVibrate(longArrayOf(500, 500))
-                .setContentIntent(getMainActivityPendingIntent())
+                .setContentIntent(getMainActivityPendingIntent(token))
 
         notificationManager.notify(
             1,
@@ -76,11 +77,14 @@ class FirebaseService : FirebaseMessagingService() {
         )
     }
 
-    private fun getMainActivityPendingIntent() =
+    private fun getMainActivityPendingIntent(token: String) =
         PendingIntent.getActivity(
             this,
             0,
-            Intent(this, MainActivity::class.java),
+            Intent(this, MainActivity::class.java).also {
+                it.action = ACTION_SEND_BACK_FRAGMENT
+                it.putExtra("token", token)
+            },
             PendingIntent.FLAG_UPDATE_CURRENT
         )
 

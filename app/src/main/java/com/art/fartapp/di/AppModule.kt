@@ -10,6 +10,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
+import retrofit2.Callback
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Qualifier
@@ -34,9 +35,13 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideDatabase(app: Application) =
-        Room
-            .databaseBuilder(app, FarterDatabase::class.java, "farter_database")
+    fun provideDatabase(
+        app: Application,
+        callback: FarterDatabase.Callback
+    ) =
+        Room.databaseBuilder(app, FarterDatabase::class.java, "farter_database")
+            .addCallback(callback)
+            .fallbackToDestructiveMigration()
             .build()
 
     @Provides
