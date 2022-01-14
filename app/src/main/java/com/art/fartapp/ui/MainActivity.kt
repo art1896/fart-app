@@ -42,6 +42,8 @@ class MainActivity : AppCompatActivity() {
 
         setupActionBarWithNavController(navController)
 
+        navigateToSendBackFragmentIfNeeded(intent)
+
         connectionLiveData = ConnectionLiveData(this)
         connectionLiveData.observe(this) {
             if (observed) {
@@ -97,7 +99,8 @@ class MainActivity : AppCompatActivity() {
         if (intent?.action == ACTION_SEND_BACK_FRAGMENT) {
             navController.navigate(
                 SendBackDialogFragmentDirections.actionGlobalSendBackDialogFragment(
-                    intent.getStringExtra("token")!!
+                    intent.getStringExtra("token")!!,
+                    intent.getStringExtra("rawRes")!!
                 )
             )
         }

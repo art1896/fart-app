@@ -41,7 +41,11 @@ class FartersViewModel @Inject constructor(
         farterDao.getFarters(query, filterPreferences.sortOrder)
     }
 
+    private val acceptedFartsFlow = farterDao.getAcceptedFarts()
+
     val farters = taskFlow.asLiveData()
+
+    val acceptedFarts = acceptedFartsFlow.asLiveData()
 
     fun onSortOrderSelected(sortOrder: SortOrder) = viewModelScope.launch {
         preferencesManager.updateSortOrder(sortOrder)
@@ -61,9 +65,6 @@ class FartersViewModel @Inject constructor(
         fartersEventChannel.send(FartersEvent.NavigateToAddFarterScreen)
     }
 
-    fun onEditFarterClick(farter: Farter) = viewModelScope.launch {
-        fartersEventChannel.send(FartersEvent.NavigateToEditFarterScreen(farter))
-    }
 
     fun onAddEditResult(result: Int) {
         when (result) {
@@ -79,7 +80,7 @@ class FartersViewModel @Inject constructor(
         fartersEventChannel.send(FartersEvent.NavigateToUserGuideScreen)
     }
 
-    fun showFarterSavedConfirmationMessage(msg: String) = viewModelScope.launch {
+    private fun showFarterSavedConfirmationMessage(msg: String) = viewModelScope.launch {
         fartersEventChannel.send(FartersEvent.ShowFarterSavedConfirmationMessage(msg))
     }
 
@@ -89,7 +90,7 @@ class FartersViewModel @Inject constructor(
 
     fun onSendFartClick(farter: Farter) = viewModelScope.launch {
         if (connectivityManager.isNetworkAvailable.value) {
-            fartersEventChannel.send(FartersEvent.NavigateToSendFartScreen(farter))
+            fartersEventChannel.send(FartersEvent.OpenBottomSheet(farter))
         } else {
             fartersEventChannel.send(FartersEvent.ShowNoInternetConnectionMessage)
         }
@@ -102,7 +103,6 @@ class FartersViewModel @Inject constructor(
 
     sealed class FartersEvent {
         object NavigateToAddFarterScreen : FartersEvent()
-        data class NavigateToEditFarterScreen(val farter: Farter) : FartersEvent()
         data class ShowUndoDeleteFarterMessage(val farter: Farter) : FartersEvent()
         data class ShowFarterSavedConfirmationMessage(val msg: String) : FartersEvent()
         object NavigatetoDeleteAllFartersScreen : FartersEvent()
@@ -110,6 +110,7 @@ class FartersViewModel @Inject constructor(
         data class NavigateToQrScreen(val token: String?) : FartersEvent()
         object ShowNoInternetConnectionMessage : FartersEvent()
         object NavigateToUserGuideScreen : FartersViewModel.FartersEvent()
+        data class OpenBottomSheet(val farter: Farter) : FartersViewModel.FartersEvent()
     }
 
 

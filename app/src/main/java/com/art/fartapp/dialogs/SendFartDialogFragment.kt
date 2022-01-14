@@ -17,10 +17,10 @@ class SendFartDialogFragment : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog =
         AlertDialog.Builder(requireContext())
             .setTitle("Send fart")
-            .setMessage("Do you really want to send fart?")
+            .setMessage("Do you really want to send fart to ${args.farter.name}?")
             .setNegativeButton("Cancel", null)
             .setPositiveButton("Yes") { _, _ ->
-                viewModel.onConfirmClick(args.farter)
+//                viewModel.onConfirmClick(args.farter)
             }
             .create()
 

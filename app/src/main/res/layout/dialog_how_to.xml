@@ -6,6 +6,7 @@
     android:padding="0dp"
     android:layout_margin="0dp"
     android:weightSum="1"
+    android:background="#1A242E"
     android:orientation="vertical">
 
 
@@ -46,7 +47,7 @@
             android:layout_alignParentBottom="true"
             android:text="Skip"
             android:textAllCaps="false"
-            android:textColor="@color/black" />
+            android:textColor="#E8F1F9" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/next_button"
@@ -56,7 +57,7 @@
             android:layout_alignParentBottom="true"
             android:text="Next"
             style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:textColor="@color/black"
+            android:textColor="#E8F1F9"
             android:textAllCaps="false"/>
 
 

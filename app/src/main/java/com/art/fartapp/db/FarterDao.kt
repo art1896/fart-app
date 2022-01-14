@@ -31,4 +31,13 @@ interface FarterDao {
     @Query("DELETE FROM farter_table")
     suspend fun deleteAllFarters()
 
+    @Insert
+    suspend fun insertAcceptedFart(acceptedFarts: AcceptedFarts)
+
+    @Query("SELECT COUNT(*) FROM accepted_farts_table")
+    fun getAcceptedFartsCount(): Flow<Int>
+
+    @Query("SELECT * FROM accepted_farts_table")
+    fun getAcceptedFarts(): Flow<List<AcceptedFarts>>
+
 }

@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_fartersFragment_to_addEditFarterFragment"
             app:destination="@id/addEditFarterFragment" />
+        <action
+            android:id="@+id/action_fartersFragment_to_sendBottomSheet"
+            app:destination="@id/sendBottomSheet" />
     </fragment>
     <fragment
         android:id="@+id/addEditFarterFragment"
@@ -87,9 +90,23 @@
         <argument
             android:name="token"
             app:argType="string" />
+        <argument
+            android:name="rawRes"
+            app:argType="string" />
     </dialog>
     <action
         android:id="@+id/action_global_sendBackDialogFragment"
         app:destination="@id/sendBackDialogFragment" />
+    <dialog
+        android:id="@+id/sendBottomSheet"
+        android:name="com.art.fartapp.dialogs.bottomsheet.SendBottomSheet"
+        android:label="SendBottomSheet">
+        <argument
+            android:name="farter"
+            app:argType="com.art.fartapp.db.Farter" />
+        <action
+            android:id="@+id/action_sendBottomSheet_to_addEditFarterFragment"
+            app:destination="@id/addEditFarterFragment" />
+    </dialog>
 
 </navigation>
