@@ -13,6 +13,7 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.art.fartapp.R
@@ -20,6 +21,7 @@ import com.art.fartapp.data.SortOrder
 import com.art.fartapp.databinding.FragmentFartersBinding
 import com.art.fartapp.db.Farter
 import com.art.fartapp.util.ConnectivityManager
+import com.art.fartapp.util.SimpleDividerItemDecoration
 import com.art.fartapp.util.exhaustive
 import com.art.fartapp.util.onQueryTextChanged
 import com.google.android.gms.ads.AdRequest
@@ -55,6 +57,7 @@ class FartersFragment : Fragment(R.layout.fragment_farters), FartersAdapter.OnIt
             recyclerViewFarters.apply {
                 adapter = fartersAdapter
                 setHasFixedSize(true)
+                addItemDecoration(SimpleDividerItemDecoration(requireContext(), R.drawable.line_divider))
                 addOnScrollListener(object : RecyclerView.OnScrollListener() {
                     override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                         super.onScrollStateChanged(recyclerView, newState)
@@ -103,11 +106,8 @@ class FartersFragment : Fragment(R.layout.fragment_farters), FartersAdapter.OnIt
         hideFab()
 
         viewModel.farters.observe(viewLifecycleOwner) {
-            Log.d(TAG, "onViewCreated: $it")
-            binding.imageViewFart.animate().alpha(if (it.isEmpty()) 1f else 0.3f)
             fartersAdapter.submitList(it)
         }
-
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             if (!viewModel.preferencesFlow.first().isGuideShowed) {
                 viewModel.onUserGuideClick()
@@ -124,14 +124,6 @@ class FartersFragment : Fragment(R.layout.fragment_farters), FartersAdapter.OnIt
                         val action =
                             FartersFragmentDirections.actionFartersFragmentToAddEditFarterFragment(
                                 title = "New Farter"
-                            )
-                        findNavController().navigate(action)
-                    }
-                    is FartersViewModel.FartersEvent.NavigateToEditFarterScreen -> {
-                        val action =
-                            FartersFragmentDirections.actionFartersFragmentToAddEditFarterFragment(
-                                event.farter,
-                                "Edit Farter"
                             )
                         findNavController().navigate(action)
                     }
@@ -165,6 +157,10 @@ class FartersFragment : Fragment(R.layout.fragment_farters), FartersAdapter.OnIt
                     }
                     FartersViewModel.FartersEvent.NavigateToUserGuideScreen -> {
                         showUserGuideDialog()
+                    }
+                    is FartersViewModel.FartersEvent.OpenBottomSheet -> {
+                        val action = FartersFragmentDirections.actionFartersFragmentToSendBottomSheet(event.farter)
+                        findNavController().navigate(action)
                     }
                 }.exhaustive
             }
@@ -252,10 +248,6 @@ class FartersFragment : Fragment(R.layout.fragment_farters), FartersAdapter.OnIt
 
 
     override fun onItemClick(farter: Farter) {
-        viewModel.onEditFarterClick(farter)
-    }
-
-    override fun onSendFartClick(farter: Farter) {
         viewModel.onSendFartClick(farter)
     }
 }

@@ -12,7 +12,7 @@ class FartersAdapter(private val listener: FartersAdapter.OnItemClickListener) :
     ListAdapter<Farter, FartersAdapter.FartersViewHolder>(FarterDiffUtil()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FartersViewHolder {
-        val binding = ItemFarterBinding.inflate(LayoutInflater.from(parent.context))
+        val binding = ItemFarterBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return FartersViewHolder(binding)
     }
 
@@ -27,17 +27,10 @@ class FartersAdapter(private val listener: FartersAdapter.OnItemClickListener) :
         init {
             binding.apply {
                 root.setOnClickListener {
-                    val position = adapterPosition
+                    val position = absoluteAdapterPosition
                     if (position != RecyclerView.NO_POSITION) {
                         val farter = getItem(position)
                         listener.onItemClick(farter)
-                    }
-                }
-                fabSendFart.setOnClickListener {
-                    val position = adapterPosition
-                    if (position != RecyclerView.NO_POSITION) {
-                        val farter = getItem(position)
-                        listener.onSendFartClick(farter)
                     }
                 }
             }
@@ -47,13 +40,14 @@ class FartersAdapter(private val listener: FartersAdapter.OnItemClickListener) :
             binding.apply {
                 farterName.text = farter.name
                 farterDateCreated.text = farter.createdDateFormatted
+                avatarCard.setCardBackgroundColor(farter.color)
+                textFirstLatter.text = farter.name.first().uppercase()
             }
         }
     }
 
     interface OnItemClickListener {
         fun onItemClick(farter: Farter)
-        fun onSendFartClick(farter: Farter)
     }
 
 

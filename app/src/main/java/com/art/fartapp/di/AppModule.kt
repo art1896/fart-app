@@ -10,7 +10,6 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
-import retrofit2.Callback
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Qualifier
@@ -46,6 +45,9 @@ object AppModule {
 
     @Provides
     fun provideDao(db: FarterDatabase) = db.farterDao()
+
+    @Provides
+    fun provideSoundDao(db: FarterDatabase) = db.soundDao()
 
     @ApplicationScope
     @Provides

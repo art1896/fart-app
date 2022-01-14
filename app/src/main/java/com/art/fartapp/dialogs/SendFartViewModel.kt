@@ -22,15 +22,15 @@ class SendFartViewModel @Inject constructor(
 
     private val preferencesFlow = preferencesManager.preferencesFlow
 
-    fun onConfirmClick(farter: Farter) = applicationScope.launch {
-        repository.sendFart(
-            FcmData(
-                Data(
-                    "Fart",
-                    "You received a FART",
-                    preferencesFlow.first().token
-                ), farter.token
-            )
-        )
-    }
+//    fun onConfirmClick(farter: Farter) = applicationScope.launch {
+//        repository.sendFart(
+//            FcmData(
+//                Data(
+//                    "Fart",
+//                    "You received a FART",
+//                    preferencesFlow.first().token
+//                ), farter.token
+//            )
+//        )
+//    }
 }

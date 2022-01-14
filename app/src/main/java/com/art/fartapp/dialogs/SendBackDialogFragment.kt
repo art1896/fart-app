@@ -20,7 +20,7 @@ class SendBackDialogFragment : DialogFragment() {
             .setMessage("Do you really want to send back FART?")
             .setNegativeButton("Cancel", null)
             .setPositiveButton("Yes") { _, _ ->
-                viewModel.sendBack(args.token)
+                viewModel.sendBack(args.token, args.rawRes)
             }
             .create()
 

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.res.Resources
+import android.graphics.Color
 import android.graphics.Insets
 import android.graphics.Rect
 import android.os.Build
@@ -18,6 +19,15 @@ import androidx.fragment.app.Fragment
 import smartdevelop.ir.eram.showcaseviewlib.GuideView
 import smartdevelop.ir.eram.showcaseviewlib.config.DismissType
 import smartdevelop.ir.eram.showcaseviewlib.listener.GuideListener
+import java.util.*
+import android.content.ContentResolver
+import android.graphics.drawable.Drawable
+import android.net.Uri
+import java.io.File
+import androidx.annotation.AnyRes
+import androidx.annotation.ColorRes
+import androidx.core.content.ContextCompat
+
 
 val <T> T.exhaustive: T
     get() = this
@@ -46,6 +56,36 @@ fun Activity.showShowCaseView(
         .setGuideListener(guideListener)
         .build()
         .show()
+}
+
+fun getRandomColor(): Int {
+    val rnd = Random()
+    return Color.argb(255, rnd.nextInt(250) + 1, rnd.nextInt(250) + 1, rnd.nextInt(250) + 1)
+}
+
+fun Context.getResourceName(id: Int): String = resources.getResourceEntryName(id)
+
+fun Context.getResourceId(resourceName: String, type: String) = resources.getIdentifier(resourceName, type, packageName)
+
+fun View.sp() = resources.displayMetrics.scaledDensity
+fun View.dp() = resources.displayMetrics.density
+fun View.getDrawableX(drawableId: Int): Drawable {
+    return ContextCompat.getDrawable(context, drawableId)!!
+}
+
+fun View.getColorX(@ColorRes colorRes: Int): Int {
+    return ContextCompat.getColor(context, colorRes)
+}
+
+@Throws(Resources.NotFoundException::class)
+fun Context.getUriToResource(@AnyRes resId: Int): Uri? {
+    val res = resources
+    return Uri.parse(
+        ContentResolver.SCHEME_ANDROID_RESOURCE +
+                "://" + res.getResourcePackageName(resId)
+                + '/' + res.getResourceTypeName(resId)
+                + '/' + res.getResourceEntryName(resId)
+    )
 }
 
 fun Context.getDisplayDimensions(): Pair<Int, Int> {
