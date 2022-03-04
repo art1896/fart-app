@@ -1,9 +1,14 @@
 package com.art.fartapp.ui
 
 import android.app.Activity
+import android.app.PendingIntent
 import android.content.Intent
 import android.graphics.Color
+import android.nfc.NdefMessage
+import android.nfc.NfcAdapter
 import android.os.Bundle
+import android.util.Log
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.navigation.NavController
@@ -12,12 +17,16 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.art.fartapp.R
 import com.art.fartapp.dialogs.SendBackDialogFragmentDirections
+import com.art.fartapp.ui.addeditfarter.MainViewModel
 import com.art.fartapp.util.ConnectionLiveData
 import com.art.fartapp.util.ConnectivityManager
+import com.art.fartapp.util.NdefMessageParser
 import com.google.android.gms.ads.MobileAds
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+
+private const val TAG = "AddEditFarterFragment"
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -29,11 +38,16 @@ class MainActivity : AppCompatActivity() {
     lateinit var connectivityManager: ConnectivityManager
 
     private lateinit var connectionLiveData: ConnectionLiveData
+    private val viewModel by viewModels<MainViewModel>()
+
+    private var mNfcAdapter: NfcAdapter? = null
+    private var mPendingIntent: PendingIntent? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        observed = false
         MobileAds.initialize(this) {}
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
@@ -43,6 +57,14 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController)
 
         navigateToSendBackFragmentIfNeeded(intent)
+
+        mNfcAdapter = NfcAdapter.getDefaultAdapter(this)
+
+        mPendingIntent = PendingIntent.getActivity(
+            this, 0,
+            Intent(this, this.javaClass)
+                .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), PendingIntent.FLAG_MUTABLE
+        )
 
         connectionLiveData = ConnectionLiveData(this)
         connectionLiveData.observe(this) {
@@ -74,6 +96,18 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        mNfcAdapter?.enableForegroundDispatch(this, mPendingIntent, null, null)
+    }
+
+
+    override fun onPause() {
+        super.onPause()
+        mNfcAdapter?.disableForegroundDispatch(this)
+    }
+
+
     override fun onSupportNavigateUp(): Boolean {
         return navController.navigateUp() || super.onSupportNavigateUp()
     }
@@ -90,9 +124,12 @@ class MainActivity : AppCompatActivity() {
         observed = false
     }
 
-    override fun onNewIntent(intent: Intent?) {
+    override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         navigateToSendBackFragmentIfNeeded(intent)
+        if (NfcAdapter.ACTION_NDEF_DISCOVERED == intent.action && navController.currentDestination?.id == R.id.addBottomSheet) {
+            viewModel.intent.set(intent)
+        }
     }
 
     private fun navigateToSendBackFragmentIfNeeded(intent: Intent?) {

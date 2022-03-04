@@ -119,7 +119,7 @@ class FirebaseService : FirebaseMessagingService() {
                     it.putExtra("rawRes", rawRes)
                 }
             },
-            PendingIntent.FLAG_UPDATE_CURRENT
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
         )
 
     @RequiresApi(Build.VERSION_CODES.O)

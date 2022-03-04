@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/send_bottom_navigation.xml"
+    app:startDestination="@id/sendFragment">
+    <fragment
+        android:id="@+id/sendFragment"
+        android:name="com.art.fartapp.dialogs.bottomsheet.SendFragment"
+        android:label="SendFragment"
+        tools:layout="@layout/fragment_send">
+        <argument
+            android:name="farter"
+            app:argType="com.art.fartapp.db.Farter" />
+        <action
+            android:id="@+id/action_sendFragment_to_editFragment"
+            app:destination="@id/editFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+    <fragment
+        android:id="@+id/editFragment"
+        android:name="com.art.fartapp.ui.addeditfarter.EditFragment"
+        android:label="fragment_edit"
+        tools:layout="@layout/fragment_edit" >
+        <argument
+            android:name="farter"
+            app:argType="com.art.fartapp.db.Farter" />
+    </fragment>
+</navigation>

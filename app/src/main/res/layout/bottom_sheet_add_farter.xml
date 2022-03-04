@@ -1,26 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:clipToPadding="false"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:padding="12dp"
+    xmlns:tools="http://schemas.android.com/tools"
     tools:background="#1A242E">
 
     <View
         android:layout_width="35dp"
         android:layout_height="5dp"
+        android:layout_marginTop="12dp"
         android:layout_gravity="center_horizontal"
         android:background="@drawable/shape" />
 
     <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/bottom_sheet_send_nav_host_fragment"
+        android:id="@+id/bottom_sheet_nav_host_fragment"
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:defaultNavHost="true"/>
-
+        app:defaultNavHost="true"
+        app:navGraph="@navigation/add_bottom_navigation" />
 
 </LinearLayout>

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".dialogs.QrFragment"
+    android:background="#1A242E">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/qr_card"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:cardUseCompatPadding="true"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:background="@color/white"
+        app:cardCornerRadius="12dp">
+
+        <ImageView
+            android:id="@+id/image_view_qr"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#1A242E" />
+
+    </androidx.cardview.widget.CardView>
+
+
+
+    <LinearLayout
+        android:id="@+id/or_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/qr_card"
+        android:orientation="horizontal"
+        android:padding="12dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:text="OR"
+            android:textColor="#747577"
+            android:textStyle="bold" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="12dp"
+            android:background="#747577" />
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/nfc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/or_layout"
+        android:background="@drawable/custom_focused_ripple">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/nfc_card"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:layout_marginEnd="6dp"
+            android:layout_marginBottom="6dp"
+            app:cardBackgroundColor="#7B7C80"
+            app:cardCornerRadius="8dp"
+            app:cardUseCompatPadding="true"
+            app:contentPadding="6dp">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_nfc"
+                app:tint="#D7D7D9" />
+
+        </androidx.cardview.widget.CardView>
+
+        <LinearLayout
+            android:id="@+id/nfc_text_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/nfc_card"
+            android:layout_alignBottom="@id/nfc_card"
+            android:gravity="center_vertical"
+            android:layout_toEndOf="@id/nfc_card"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="NFC Scan"
+                android:textStyle="bold"
+                android:textColor="#CECED0" />
+
+
+            <TextView
+                android:id="@+id/nfc_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Put your friend's NFC on the back of the smartphone"
+                android:textSize="11sp"
+                android:textColor="#A9AAAC" />
+
+
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
+
+
+
+
+
+
+</RelativeLayout>

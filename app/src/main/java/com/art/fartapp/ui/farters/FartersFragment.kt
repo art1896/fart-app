@@ -1,5 +1,8 @@
 package com.art.fartapp.ui.farters
 
+import android.app.ActivityManager
+import android.app.Application
+import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -13,24 +16,23 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.art.fartapp.R
 import com.art.fartapp.data.SortOrder
 import com.art.fartapp.databinding.FragmentFartersBinding
 import com.art.fartapp.db.Farter
-import com.art.fartapp.util.ConnectivityManager
-import com.art.fartapp.util.SimpleDividerItemDecoration
-import com.art.fartapp.util.exhaustive
-import com.art.fartapp.util.onQueryTextChanged
+import com.art.fartapp.services.KHostApduService
+import com.art.fartapp.util.*
 import com.google.android.gms.ads.AdRequest
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
+import java.security.AccessController.getContext
 import javax.inject.Inject
+
 
 private const val TAG = "FarterDatabase"
 
@@ -122,16 +124,14 @@ class FartersFragment : Fragment(R.layout.fragment_farters), FartersAdapter.OnIt
                     }
                     is FartersViewModel.FartersEvent.NavigateToAddFarterScreen -> {
                         val action =
-                            FartersFragmentDirections.actionFartersFragmentToAddEditFarterFragment(
-                                title = "New Farter"
-                            )
+                            FartersFragmentDirections.actionGlobalAddBottomSheet()
                         findNavController().navigate(action)
                     }
                     is FartersViewModel.FartersEvent.ShowFarterSavedConfirmationMessage -> {
                         Snackbar.make(requireView(), event.msg, Snackbar.LENGTH_LONG)
                             .show()
                     }
-                    FartersViewModel.FartersEvent.NavigatetoDeleteAllFartersScreen -> {
+                    is FartersViewModel.FartersEvent.NavigatetoDeleteAllFartersScreen -> {
                         val action =
                             FartersFragmentDirections.actionGlobalDeleteAllFartersDialogFragment()
                         findNavController().navigate(action)
@@ -144,7 +144,9 @@ class FartersFragment : Fragment(R.layout.fragment_farters), FartersAdapter.OnIt
                     is FartersViewModel.FartersEvent.NavigateToQrScreen -> {
                         val action =
                             FartersFragmentDirections.actionGlobalQrDialogFragment(viewModel.preferencesFlow.first().token)
-                        findNavController().navigate(action)
+                        if(findNavController().currentDestination?.label!! != "QrDialogFragment") {
+                            findNavController().navigate(action)
+                        } else {}
                     }
                     FartersViewModel.FartersEvent.ShowNoInternetConnectionMessage -> {
                         Snackbar.make(
@@ -159,7 +161,7 @@ class FartersFragment : Fragment(R.layout.fragment_farters), FartersAdapter.OnIt
                         showUserGuideDialog()
                     }
                     is FartersViewModel.FartersEvent.OpenBottomSheet -> {
-                        val action = FartersFragmentDirections.actionFartersFragmentToSendBottomSheet(event.farter)
+                        val action = FartersFragmentDirections.actionGlobalSendBottomSheet(event.farter)
                         findNavController().navigate(action)
                     }
                 }.exhaustive
@@ -250,4 +252,5 @@ class FartersFragment : Fragment(R.layout.fragment_farters), FartersAdapter.OnIt
     override fun onItemClick(farter: Farter) {
         viewModel.onSendFartClick(farter)
     }
+
 }
