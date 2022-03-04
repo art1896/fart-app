@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class QrScannerViewModel @Inject constructor(private val farterDao: FarterDao,) : ViewModel() {
+class QrScannerViewModel @Inject constructor(private val farterDao: FarterDao) : ViewModel() {
 
     private val fartersEventChannel = Channel<FartersEvent>()
     val fartersEvent = fartersEventChannel.receiveAsFlow()

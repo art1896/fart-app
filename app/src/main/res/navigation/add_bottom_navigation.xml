@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/add_bottom_navigation.xml"
+    app:startDestination="@id/addEditFarterFragment">
+
+    <fragment
+        android:id="@+id/addEditFarterFragment"
+        android:name="com.art.fartapp.ui.addeditfarter.AddEditFarterFragment"
+        android:label="fragment_add_edit_farter"
+        tools:layout="@layout/fragment_add_farter" >
+        <action
+            android:id="@+id/action_addEditFarterFragment_to_addWithNfcFragment"
+            app:destination="@id/addWithNfcFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"  />
+        <action
+            android:id="@+id/action_addEditFarterFragment_to_qrScannerFragment"
+            app:destination="@id/qrScannerFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addWithNfcFragment"
+        android:name="com.art.fartapp.ui.addeditfarter.AddWithNfcFragment"
+        android:label="AddWithNfcFragment" >
+        <argument
+            android:name="name"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/qrScannerFragment"
+        android:name="com.art.fartapp.ui.addeditfarter.QrScannerFragment"
+        android:label="fragment_qr_scanner"
+        tools:layout="@layout/fragment_qr_scanner" >
+        <argument
+            android:name="name"
+            app:argType="string" />
+    </fragment>
+
+</navigation>

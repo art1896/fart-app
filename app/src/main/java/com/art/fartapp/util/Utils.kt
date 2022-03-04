@@ -2,31 +2,49 @@ package com.art.fartapp.util
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.ActivityManager
+import android.content.ContentResolver
 import android.content.Context
 import android.content.res.Resources
+import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.Insets
 import android.graphics.Rect
+import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
+import android.util.Log
 import android.util.Size
 import android.view.View
 import android.view.WindowInsets
 import android.view.WindowManager
 import android.view.WindowMetrics
+import android.view.inputmethod.InputMethodManager
+import android.widget.ImageView
+import androidx.annotation.AnyRes
+import androidx.annotation.ColorRes
+import androidx.annotation.IdRes
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
+import com.google.zxing.BarcodeFormat
+import com.google.zxing.MultiFormatWriter
+import com.journeyapps.barcodescanner.BarcodeEncoder
 import smartdevelop.ir.eram.showcaseviewlib.GuideView
 import smartdevelop.ir.eram.showcaseviewlib.config.DismissType
 import smartdevelop.ir.eram.showcaseviewlib.listener.GuideListener
-import java.util.*
-import android.content.ContentResolver
-import android.graphics.drawable.Drawable
-import android.net.Uri
 import java.io.File
-import androidx.annotation.AnyRes
-import androidx.annotation.ColorRes
-import androidx.core.content.ContextCompat
+import java.io.FileOutputStream
+import java.io.IOException
+import java.util.*
+import kotlin.experimental.xor
+
+
+val hexArray = "0123456789ABCDEF".toCharArray()
 
 
 val <T> T.exhaustive: T
@@ -40,6 +58,27 @@ fun Fragment.vibrate() {
     } else {
         vibrator.vibrate(50)
     }
+}
+
+fun bytesToHex(bytes: ByteArray): String? {
+    val hexChars = CharArray(bytes.size * 2)
+    for (j in bytes.indices) {
+        val v: Int = bytes[j].toInt() and 0xFF
+        hexChars[j * 2] = hexArray[v ushr 4]
+        hexChars[j * 2 + 1] = hexArray[v and 0x0F]
+    }
+    return String(hexChars)
+}
+
+fun isEqual(a: ByteArray, b: ByteArray): Boolean {
+    if (a.size != b.size) {
+        return false
+    }
+    var result = 0
+    for (i in a.indices) {
+        result = result or (a[i] xor b[i]).toInt()
+    }
+    return result == 0
 }
 
 fun Activity.showShowCaseView(
@@ -56,6 +95,48 @@ fun Activity.showShowCaseView(
         .setGuideListener(guideListener)
         .build()
         .show()
+}
+
+fun setQrToImageView(text: String, imageView: ImageView?, context: Context): Bitmap? {
+    val multiFormatWriter = MultiFormatWriter()
+    val size = (context.getDisplayDimensions().first * 0.6).toInt()
+    try {
+        val bitMatrix = multiFormatWriter.encode(text, BarcodeFormat.QR_CODE, size, size)
+        val barcodeEncoder = BarcodeEncoder()
+        val bitmap = barcodeEncoder.createBitmap(bitMatrix)
+        imageView?.setImageBitmap(bitmap)
+        return bitmap
+    } catch (e: Exception) {
+        e.printStackTrace()
+        return null
+    }
+}
+
+fun Fragment.findNavControllerById(@IdRes id: Int): NavController {
+    var parent = parentFragment
+    while (parent != null) {
+        if (parent is NavHostFragment && parent.id == id) {
+            return parent.navController
+        }
+        parent = parent.parentFragment
+    }
+    throw RuntimeException("NavController with specified id not found")
+}
+
+fun getBitmapUri(image: Bitmap, context: Context): Uri? {
+    val imagesFolder = File(context.cacheDir, "images")
+    var uri: Uri? = null
+    try {
+        imagesFolder.mkdirs()
+        val file = File(imagesFolder, "shared_image.png")
+        val stream = FileOutputStream(file)
+        image.compress(Bitmap.CompressFormat.PNG, 100, stream)
+        stream.flush()
+        stream.close()
+        uri = FileProvider.getUriForFile(context, "com.art.fileprovider", file)
+    } catch (e: IOException) {
+    }
+    return uri
 }
 
 fun getRandomColor(): Int {
@@ -115,5 +196,24 @@ fun Context.getDisplayDimensions(): Pair<Int, Int> {
     }
 }
 
+fun Context.isMyServiceRunning(serviceClass: Class<*>): Boolean {
+    val manager = this.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+    return manager.getRunningServices(Integer.MAX_VALUE)
+        .any { it.service.className == serviceClass.name }
+}
+
 val Int.toDp: Int
     get() = (this / Resources.getSystem().displayMetrics.density).toInt()
+
+fun Fragment.hideKeyboard() {
+    view?.let { activity?.hideKeyboard(it) }
+}
+
+fun Activity.hideKeyboard() {
+    hideKeyboard(currentFocus ?: View(this))
+}
+
+fun Context.hideKeyboard(view: View) {
+    val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+    inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
+}

@@ -10,8 +10,11 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 import javax.inject.Qualifier
 import javax.inject.Singleton
 
@@ -21,12 +24,31 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideRetrofit(): Retrofit =
+    fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit =
         Retrofit
             .Builder()
             .baseUrl(Api.BASE_URL)
+            .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
+
+    @Provides
+    fun providesLoggingInterceptor(): HttpLoggingInterceptor {
+        return HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
+    }
+
+    @Provides
+    fun provideOkHttpClient(loggingInterceptor: HttpLoggingInterceptor): OkHttpClient {
+        val okHttpClient = OkHttpClient().newBuilder()
+
+        okHttpClient.callTimeout(40, TimeUnit.SECONDS)
+        okHttpClient.connectTimeout(40, TimeUnit.SECONDS)
+        okHttpClient.readTimeout(40, TimeUnit.SECONDS)
+        okHttpClient.writeTimeout(40, TimeUnit.SECONDS)
+        okHttpClient.addInterceptor(loggingInterceptor)
+        okHttpClient.build()
+        return okHttpClient.build()
+    }
 
     @Provides
     @Singleton

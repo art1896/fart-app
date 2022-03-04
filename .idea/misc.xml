@@ -13,11 +13,12 @@
         <entry key="app/src/main/res/drawable/ic_round_done_24.xml" value="0.24444444444444444" />
         <entry key="app/src/main/res/drawable/ic_round_pause_24.xml" value="0.24444444444444444" />
         <entry key="app/src/main/res/drawable/ic_round_play_arrow_24.xml" value="0.24444444444444444" />
+        <entry key="app/src/main/res/drawable/ic_share.xml" value="0.1375" />
         <entry key="app/src/main/res/drawable/line_divider.xml" value="0.24722222222222223" />
         <entry key="app/src/main/res/drawable/play_pause_toggle_bg.xml" value="0.24444444444444444" />
         <entry key="app/src/main/res/drawable/progress_drawable.xml" value="0.23796296296296296" />
         <entry key="app/src/main/res/drawable/scanning_qr.xml" value="0.25092592592592594" />
-        <entry key="app/src/main/res/drawable/shape.xml" value="0.24722222222222223" />
+        <entry key="app/src/main/res/drawable/shape.xml" value="0.10210198296440973" />
         <entry key="app/src/main/res/drawable/showing_qr.xml" value="0.9" />
         <entry key="app/src/main/res/drawable/switch_thumb_false.xml" value="0.24444444444444444" />
         <entry key="app/src/main/res/drawable/switch_thumb_true.xml" value="0.24444444444444444" />
@@ -32,22 +33,33 @@
         <entry key="app/src/main/res/drawable/track_on.xml" value="0.24444444444444444" />
         <entry key="app/src/main/res/layout/action_layout_qr.xml" value="0.19814814814814816" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.2328125" />
+        <entry key="app/src/main/res/layout/bottom_sheet_add_farter.xml" value="0.2027837117513021" />
+        <entry key="app/src/main/res/layout/bottom_sheet_nfc_send.xml" value="0.24895833333333334" />
         <entry key="app/src/main/res/layout/bottom_sheet_send.xml" value="0.22" />
         <entry key="app/src/main/res/layout/dialog_how_to.xml" value="0.246875" />
         <entry key="app/src/main/res/layout/dialog_no_network.xml" value="0.246875" />
         <entry key="app/src/main/res/layout/dialog_qr.xml" value="0.246875" />
-        <entry key="app/src/main/res/layout/fragment_add_edit_farter.xml" value="0.34603658536585363" />
+        <entry key="app/src/main/res/layout/fragment_add_edit_farter.xml" value="0.2119103036275723" />
+        <entry key="app/src/main/res/layout/fragment_add_farter.xml" value="0.24895833333333334" />
+        <entry key="app/src/main/res/layout/fragment_add_with_nfc.xml" value="0.24895833333333334" />
+        <entry key="app/src/main/res/layout/fragment_edit.xml" value="0.20436083796494228" />
         <entry key="app/src/main/res/layout/fragment_farters.xml" value="0.2" />
+        <entry key="app/src/main/res/layout/fragment_qr.xml" value="0.21889258490668398" />
         <entry key="app/src/main/res/layout/fragment_qr_scanner.xml" value="0.246875" />
+        <entry key="app/src/main/res/layout/fragment_send.xml" value="0.22972869873046875" />
         <entry key="app/src/main/res/layout/item_farter.xml" value="0.25" />
         <entry key="app/src/main/res/layout/item_sounds.xml" value="0.246875" />
         <entry key="app/src/main/res/layout/item_user_guide.xml" value="0.246875" />
         <entry key="app/src/main/res/layout/progress_button_layout.xml" value="0.25" />
         <entry key="app/src/main/res/menu/menu_fraagment_farters.xml" value="0.246875" />
         <entry key="app/src/main/res/menu/menu_fragment_farters.xml" value="0.246875" />
+        <entry key="app/src/main/res/menu/share_menu.xml" value="0.24895833333333334" />
         <entry key="app/src/main/res/mipmap-anydpi-v26/ic_fart_launcher.xml" value="0.25277777777777777" />
         <entry key="app/src/main/res/mipmap-anydpi-v26/ic_fart_launcher_round.xml" value="0.25277777777777777" />
         <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.25277777777777777" />
+        <entry key="app/src/main/res/xml/apduservice.xml" value="0.21388888888888888" />
+        <entry key="app/src/main/res/xml/file_paths.xml" value="0.24895833333333334" />
+        <entry key="app/src/main/res/xml/nfc_tech_filter.xml" value="0.24895833333333334" />
       </map>
     </option>
   </component>

@@ -1,40 +1,52 @@
 package com.art.fartapp.ui.addeditfarter
 
 import android.Manifest
+import android.content.pm.PackageManager
+import android.nfc.NfcAdapter
 import android.os.Bundle
 import android.view.View
-import androidx.core.os.bundleOf
-import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.art.fartapp.R
-import com.art.fartapp.databinding.FragmentAddEditFarterBinding
+import com.art.fartapp.databinding.FragmentAddFarterBinding
 import com.art.fartapp.util.exhaustive
-import com.google.android.gms.ads.AdRequest
-import com.google.android.material.snackbar.Snackbar
+import com.art.fartapp.util.hideKeyboard
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 
 
+private const val TAG = "LoyaltyCardReader"
+
 @AndroidEntryPoint
-class AddEditFarterFragment : Fragment(R.layout.fragment_add_edit_farter),
+class AddEditFarterFragment : Fragment(R.layout.fragment_add_farter),
     EasyPermissions.PermissionCallbacks {
 
-    private var _binding: FragmentAddEditFarterBinding? = null
+
+    private var _binding: FragmentAddFarterBinding? = null
     private val binding get() = _binding!!
-    private val viewModel by viewModels<AddEditFarterViewModel>()
+    private val viewModel by viewModels<AddFarterViewModel>()
+
+    private var nfcAdapter: NfcAdapter? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        _binding = FragmentAddEditFarterBinding.bind(view)
-        val adRequest = AdRequest.Builder().build()
-        binding.adView.loadAd(adRequest)
+        _binding = FragmentAddFarterBinding.bind(view)
+
+        if (!requireContext().packageManager.hasSystemFeature(PackageManager.FEATURE_NFC)) {
+            binding.apply {
+                pairWithNfc.text = "NFC isn't available on the device"
+                pairWithNfc.isEnabled = false
+            }
+        } else {
+            nfcAdapter = NfcAdapter.getDefaultAdapter(requireContext())
+        }
+
+
         binding.apply {
             imageButtonQrScanner.setOnClickListener {
                 if (editTextName.text!!.isEmpty()) {
@@ -44,46 +56,40 @@ class AddEditFarterFragment : Fragment(R.layout.fragment_add_edit_farter),
                     requestPermissions()
                 }
             }
-            editTextName.setText(viewModel.farterName)
-            imageButtonQrScanner.isVisible = viewModel.farter == null
-            if (viewModel.farter != null) {
-                lottie.setAnimation(R.raw.edit_anim)
-            } else {
-                lottie.setAnimation(R.raw.qr_scanner_json)
-            }
-            fabSaveFarter.isVisible = viewModel.farter != null
             editTextName.addTextChangedListener {
-                viewModel.farterName = it.toString()
                 if (it!!.isEmpty()) {
                     textInputLayout.isErrorEnabled = true
                     textInputLayout.error = "Enter name"
                 } else textInputLayout.isErrorEnabled = false
             }
-            fabSaveFarter.setOnClickListener {
-                viewModel.onSaveClick()
+            pairWithNfc.setOnClickListener {
+                if (editTextName.text!!.isEmpty()) {
+                    textInputLayout.isErrorEnabled = true
+                    this.textInputLayout.error = "Enter name"
+                } else {
+                    hideKeyboard()
+                    viewModel.onPairWithNfcClick(this.editTextName.text.toString())
+                }
             }
         }
 
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.fartersEvent.collect { event ->
                 when (event) {
-                    is AddEditFarterViewModel.FartersEvent.NavigateToEditFarterScreen -> {
+                    is AddFarterViewModel.FartersEvent.NavigateToEditFarterScreen -> {
                         val action =
                             AddEditFarterFragmentDirections.actionAddEditFarterFragmentToQrScannerFragment(
                                 event.name
                             )
+                        hideKeyboard()
                         findNavController().navigate(action)
                     }
-                    is AddEditFarterViewModel.FartersEvent.NavigateBackWithResult -> {
-                        binding.editTextName.clearFocus()
-                        setFragmentResult(
-                            "edit_request",
-                            bundleOf("edit_result" to event.result)
-                        )
-                        findNavController().popBackStack()
-                    }
-                    is AddEditFarterViewModel.FartersEvent.ShowInvalidInputMessage -> {
-                        Snackbar.make(requireView(), event.msg, Snackbar.LENGTH_SHORT).show()
+                    is AddFarterViewModel.FartersEvent.NavigateToNfcScreen -> {
+                        val action =
+                            AddEditFarterFragmentDirections.actionAddEditFarterFragmentToAddWithNfcFragment(
+                                event.name
+                            )
+                        findNavController().navigate(action)
                     }
                 }.exhaustive
             }
@@ -91,20 +97,10 @@ class AddEditFarterFragment : Fragment(R.layout.fragment_add_edit_farter),
     }
 
     override fun onDestroyView() {
-        binding.adView.destroy()
         super.onDestroyView()
         _binding = null
     }
 
-    override fun onPause() {
-        binding.adView.pause()
-        super.onPause()
-    }
-
-    override fun onResume() {
-        binding.adView.resume()
-        super.onResume()
-    }
 
     override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {
         viewModel.onScannClick(binding.editTextName.text.toString())
@@ -142,4 +138,5 @@ class AddEditFarterFragment : Fragment(R.layout.fragment_add_edit_farter),
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
     }
+
 }

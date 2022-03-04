@@ -9,43 +9,7 @@
         android:id="@+id/fartersFragment"
         android:name="com.art.fartapp.ui.farters.FartersFragment"
         android:label="Farters"
-        tools:layout="@layout/fragment_farters">
-        <action
-            android:id="@+id/action_fartersFragment_to_addEditFarterFragment"
-            app:destination="@id/addEditFarterFragment" />
-        <action
-            android:id="@+id/action_fartersFragment_to_sendBottomSheet"
-            app:destination="@id/sendBottomSheet" />
-    </fragment>
-    <fragment
-        android:id="@+id/addEditFarterFragment"
-        android:name="com.art.fartapp.ui.addeditfarter.AddEditFarterFragment"
-        android:label="{title}"
-        tools:layout="@layout/fragment_add_edit_farter">
-        <argument
-            android:name="farter"
-            android:defaultValue="@null"
-            app:argType="com.art.fartapp.db.Farter"
-            app:nullable="true" />
-        <argument
-            android:name="title"
-            app:argType="string" />
-        <action
-            android:id="@+id/action_addEditFarterFragment_to_qrScannerFragment"
-            app:destination="@id/qrScannerFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/qrScannerFragment"
-        android:name="com.art.fartapp.ui.addeditfarter.QrScannerFragment"
-        android:label="Scan QR"
-        tools:layout="@layout/fragment_qr_scanner">
-        <argument
-            android:name="name"
-            app:argType="string" />
-        <action
-            android:id="@+id/action_qrScannerFragment_to_fartersFragment"
-            app:destination="@id/fartersFragment" />
-    </fragment>
+        tools:layout="@layout/fragment_farters"/>
     <dialog
         android:id="@+id/deleteAllFartersDialogFragment"
         android:name="com.art.fartapp.dialogs.DeleteAllFartersDialogFragment"
@@ -64,18 +28,25 @@
     <action
         android:id="@+id/action_global_sendFartDialogFragment"
         app:destination="@id/sendFartDialogFragment" />
-    <dialog
-        android:id="@+id/qrDialogFragment"
-        android:name="com.art.fartapp.dialogs.QrDialogFragment"
-        android:label="QrDialogFragment">
+    <fragment
+        android:id="@+id/qrFragment"
+        android:name="com.art.fartapp.dialogs.QrFragment"
+        android:label="Scan">
         <argument
             android:name="token"
             app:argType="string"
             app:nullable="true" />
-    </dialog>
+        <action
+            android:id="@+id/action_qrFragment_to_nfcSendBottomSheet"
+            app:destination="@id/nfcSendBottomSheet" />
+    </fragment>
     <action
         android:id="@+id/action_global_qrDialogFragment"
-        app:destination="@id/qrDialogFragment" />
+        app:destination="@id/qrFragment"
+        app:enterAnim="@anim/slide_in_right"
+        app:exitAnim="@anim/slide_out_left"
+        app:popEnterAnim="@anim/slide_in_left"
+        app:popExitAnim="@anim/slide_out_right" />
     <dialog
         android:id="@+id/howToDialogFragment"
         android:name="com.art.fartapp.dialogs.HowToDialogFragment"
@@ -104,9 +75,26 @@
         <argument
             android:name="farter"
             app:argType="com.art.fartapp.db.Farter" />
-        <action
-            android:id="@+id/action_sendBottomSheet_to_addEditFarterFragment"
-            app:destination="@id/addEditFarterFragment" />
     </dialog>
+    <dialog
+        android:id="@+id/nfcSendBottomSheet"
+        android:name="com.art.fartapp.dialogs.nfcbottomsheet.NfcSendBottomSheet"
+        android:label="bottom_sheet_nfc_send"
+        tools:layout="@layout/bottom_sheet_nfc_send" >
+        <argument
+            android:name="token"
+            app:argType="string" />
+    </dialog>
+    <dialog
+        android:id="@+id/addBottomSheet"
+        android:name="com.art.fartapp.dialogs.addfarterbottomsheet.AddBottomSheet"
+        android:label="AddBottomSheet" />
+
+    <action
+        android:id="@+id/action_global_addBottomSheet"
+        app:destination="@id/addBottomSheet" />
+    <action
+        android:id="@+id/action_global_sendBottomSheet"
+        app:destination="@id/sendBottomSheet" />
 
 </navigation>
